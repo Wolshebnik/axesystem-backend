@@ -26,35 +26,20 @@ import { CategoryService } from './category.service';
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  @Get(':id')
-  async findById(@Param('id') id: string): Promise<CategoryEntity> {
-    return await this.categoryService.findById(id);
-  }
-
-  @ApiOperation({ summary: 'Get all categories' })
-  @ApiResponse({ status: 200, type: [CategoryEntity] })
-  @ApiResponse({ status: 400, description: 'BAD REQUEST' })
-  @ApiResponse({ status: 404, description: 'NOT FOUND' })
-  @Get()
-  async findAll(): Promise<CategoryEntity[]> {
-    return await this.categoryService.findAll();
-  }
-
   @ApiOperation({ summary: 'Create category' })
   @ApiConsumes('multipart/form-data')
-  // @ApiBody({})
-  // @ApiBody({
-  //   schema: {
-  //     type: 'object',
-  //     properties: {
-  //       title: { type: 'string' },
-  //       img: {
-  //         type: 'string',
-  //         format: 'binary',
-  //       },
-  //     },
-  //   },
-  // })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        img_url: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
   @ApiCreatedResponse({
     type: CategoryEntity,
     description: 'The record has been successfully created.',
@@ -67,5 +52,25 @@ export class CategoryController {
     @UploadedFile() image,
   ): Promise<CategoryEntity> {
     return await this.categoryService.create(dto, image);
+  }
+
+  @ApiOperation({ summary: 'Get all categories' })
+  @ApiResponse({ status: 200, type: [CategoryEntity] })
+  @ApiResponse({ status: 400, description: 'BAD REQUEST' })
+  @ApiResponse({ status: 404, description: 'NOT FOUND' })
+  @Get()
+  async findAll(): Promise<CategoryEntity[]> {
+    return await this.categoryService.findAll();
+  }
+
+  @ApiOperation({ summary: 'Get category by id' })
+  @ApiCreatedResponse({
+    type: CategoryEntity,
+  })
+  @ApiResponse({ status: 400, description: 'BAD REQUEST' })
+  @ApiResponse({ status: 404, description: 'NOT FOUND' })
+  @Get(':id')
+  async findById(@Param('id') id: string): Promise<CategoryEntity> {
+    return await this.categoryService.findById(id);
   }
 }
